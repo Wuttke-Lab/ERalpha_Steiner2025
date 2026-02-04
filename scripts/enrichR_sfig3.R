@@ -17,11 +17,13 @@ if (is.null(dbs)) websiteLive <- FALSE
 if (websiteLive) head(dbs)
 
 if (websiteLive) {
-  enriched <- enrichr(na.omit(cluster2_genes), dbs$libraryName)
+  enriched <- enrichr(na.omit(cluster2_genes$V2), dbs$libraryName)
 }
 
-go_molecular <- enriched$GO_Molecular_Function_2025
-go_molecular <- go_molecular[go_molecular$Adjusted.P.value<0.05,]
+go_molecular <- enriched$GO_Biological_Process_2025
+#go_molecular <- go_molecular[go_molecular$Adjusted.P.value<0.1,]
+View(go_molecular)
+
 go_molecular <- go_molecular[order((-go_molecular$P.value)),]
 go_molecular$P.value <- as.numeric(as.character(go_molecular$P.value))
 
