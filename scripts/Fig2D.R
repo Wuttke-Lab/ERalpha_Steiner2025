@@ -1,8 +1,11 @@
 # Fbound by concentration line chart
 library(ggplot2)
 library(tidyverse)
+library(dplyr)
+library(purrr)
+library(rootSolve)
 
-kinetic_df <- read.table("/path/to/all_filtered_fov_dfs.csv",
+kinetic_df <- read.table("/Users/samuelhunter/ERalpha_Steiner2025/dat/all_filtered_fov_dfs.csv",
                          sep=",", header=TRUE)
 
 kinetic_df <- kinetic_df[kinetic_df$`Molecule.Name`=="Estradiol",]
@@ -21,6 +24,7 @@ fourPL <- function(x, Ymin, Ymax, logEC50, n) {
 }
 
 # Fit per group
+View(kinetic_df)
 fits <- kinetic_df %>%
   group_by(user_metadata.Cell.Line.ID) %>%
   group_modify(~ {
@@ -44,6 +48,7 @@ fits <- kinetic_df %>%
     }, error = function(e) tibble())
   })
 
+fits
 
 # Create smooth curves per group
 df_pred <- kinetic_df %>%
@@ -64,4 +69,33 @@ ggplot(kinetic_df, aes(Molecule.Concentration, fraction_bound, color = user_meta
   scale_x_log10(breaks=c(0.001, 0.01, 0.1, 1, 10, 100)) +
   theme_classic()
 
+# Function to compute EC90 given model parameters
+compute_EC90 <- function(Ymin, Ymax, logEC50, n) {
+  # target fraction = 90% of response range
+  target <- Ymin + 0.9 * (Ymax - Ymin)
+  
+  # equation to solve for x
+  f <- function(x) {
+    Ymin + (Ymax - Ymin) / (1 + 10^((logEC50 - log10(x)) * n)) - target
+  }
+  
+  # search in a broad range (1e-4 to 1e4)
+  out <- tryCatch(
+    uniroot(f, interval = c(1e-4, 1e4))$root,
+    error = function(e) NA
+  )
+  
+  return(out)
+}
 
+# Compute EC50 and EC90 per mutant
+ec_table <- fits %>%
+  mutate(
+    EC50 = 10^(logEC50),
+    EC90 = pmap_dbl(
+      list(Ymin, Ymax, logEC50, n),
+      compute_EC90
+    )
+  )
+
+print(ec_table)
