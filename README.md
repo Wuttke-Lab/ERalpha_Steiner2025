@@ -6,16 +6,16 @@ Full source data available at: 10.5281/zenodo.18635439
 Requirements:
 R 4.4.1 
 
-Python 3.12.8
-PyMC 5.25.1
-pytensor 2.23.0
-jupyter 1.1.1
-matplotlib 3.10.0
-scikit-learn 1.6.1
-scipy 1.15.0
+Python 3.12.8 \n
+PyMC 5.25.1 \n
+pytensor 2.23.0 \n
+jupyter 1.1.1 \n
+matplotlib 3.10.0 \n
+scikit-learn 1.6.1 \n
+scipy 1.15.0 \n
 
 For a full list of installed packages, see package.reqs for complete R session info and python environment details
-
+\n
 model_fit_residence_time.ipynb - Jupyter notebook for fitting residence time data using PyMC.
 dat - input data for scripts
 scripts - R scripts which produce the indicated figure
