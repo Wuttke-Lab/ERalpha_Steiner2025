@@ -42,3 +42,5 @@ The libraries for running R scripts are best installed by restoring the R env sn
 R
 renv::restore()
 ```
+
+For both R and Python installs, installation should be rapid (< 10 minutes total)
