@@ -7,35 +7,91 @@ library(igraph)
 library(ggraph)
 library(tidygraph)
 
-### ENRICHR ####
-setEnrichrSite("Enrichr")
-websiteLive <- TRUE
-dbs <- listEnrichrDbs()
+### GSEA ####
 
-if (is.null(dbs)) websiteLive <- FALSE
+countdata <- read.csv(file = "dat/pro_raw_counts.txt",
+                      sep="\t",header=TRUE,skip=1)
 
-if (websiteLive) head(dbs)
+rownames(countdata) <- countdata$Geneid
+countdata <- countdata[,-c(1:6)]
+metadata <- read.csv(file = "dat/metadata.csv",sep = ",", header=TRUE)
+metadata$samplecols <- colnames(countdata)
+metadata$mutant <- factor(metadata$mutant,levels = c("wt","sof1","sof2","sof3","dbm"))
+countdata <- countdata[,metadata$samplecols]
+countdata <- countdata[rowSums(countdata >= 10) >= 2, ]
 
-if (websiteLive) {
-  enriched <- enrichr(na.omit(cluster2_genes$V2), dbs$libraryName)
+dds <- DESeqDataSetFromMatrix(countData = countdata, colData = metadata,
+                              design =~mutant*treatment)
+
+dds <- DESeq(dds)
+rlog <- rlog(dds,blind = TRUE)
+
+results_to_fetch <- c("treatment_e2_vs_dmso",
+                      "mutantsof1.treatmente2", 
+                      "mutantsof2.treatmente2", 
+                      "mutantsof3.treatmente2", 
+                      "mutantdbm.treatmente2")
+
+all_sig_genes <- data.frame()
+for (result in results_to_fetch) {
+  res <- results(dds, name = result)
+  resdata <- as.data.frame(res)
+  resdata$result <- result
+  to_keep <- na.omit(resdata[resdata$padj <= 0.1,])
+  all_sig_genes <- rbind(all_sig_genes, to_keep)
+}
+all_sig_genes$rownames <- rownames(all_sig_genes)
+
+results_singlediff <- c("treatment_e2_vs_dmso",
+                        "mutantsof1.treatmente2",
+                        "mutantsof2.treatmente2",
+                        "mutantsof3.treatmente2", 
+                        "mutantdbm.treatmente2")
+
+heatmap_results <- list()
+for (result in results_singlediff) {
+  if (result=="treatment_e2_vs_dmso") {
+    res <- results(dds, name = result)
+    resdata <- as.data.frame(res)
+    to_keep <- resdata[rownames(resdata) %in% rownames(all_sig_genes),]
+    to_keep <- to_keep %>%
+      select(log2FoldChange)
+    colnames(to_keep) <- result
+    heatmap_results[[result]] <- to_keep
+  } else{
+    res <- results(dds, contrast = list(c("treatment_e2_vs_dmso",result)))
+    resdata <- as.data.frame(res)
+    to_keep <- resdata[rownames(resdata) %in% rownames(all_sig_genes),]
+    to_keep <- to_keep %>%
+      select(log2FoldChange)
+    colnames(to_keep) <- result
+    heatmap_results[[result]] <- to_keep
+  }
 }
 
-go_molecular <- enriched$GO_Biological_Process_2025
-#go_molecular <- go_molecular[go_molecular$Adjusted.P.value<0.1,]
-View(go_molecular)
-
-go_molecular <- go_molecular[order((-go_molecular$P.value)),]
-go_molecular$P.value <- as.numeric(as.character(go_molecular$P.value))
-
-go_molecular$Term <- as.factor(go_molecular$Term)
-go_molecular$Term <- factor(go_molecular$Term, levels=as.character(go_molecular$Term))
-
-ggplot(data=go_molecular,aes(x= -log10(P.value),y=Term)) +
-  geom_bar(stat="identity",color="black",fill="skyblue") + 
-  theme_classic()
+resdata <- as.data.frame(res)
+resdata$refseq <- rownames(resdata)
 
 
-### GSEA ####
+resdata <- separate_wider_delim(resdata, cols = refseq, delim = ".", names = c("refid", "iso"))
+resdata
+
+refseq_to_cid <- read.table(file = "/Users/samuelhunter/wuttke_era/pro/deseq2/refseq_to_common_id.txt",
+                            sep="\t",header=FALSE)
+
+resdata_id <- merge(resdata, refseq_to_cid,by.x="refid",by.y="V1")
+resdata_id <- resdata_id[!(duplicated(resdata_id$V2)),]
+
+
+resdata_id <- na.omit(resdata_id)
+
+
+gsea_vec <- -log(resdata_id$pvalue + 1e-20) * sign(resdata_id$log2FoldChange)
+names(gsea_vec) <- resdata_id$V2
+
+
+library(fgsea)
+
 
 GSEA = function(gene_list, GO_file, pval) {
   if ( any( duplicated(names(gene_list)) )  ) {
