@@ -21,3 +21,24 @@ model_fit_residence_time.ipynb - Jupyter notebook for fitting residence time dat
 dat - input data for scripts <br>
 scripts - R scripts which produce the indicated figure <br>
 
+
+## Installation
+### Jupyter Notebook
+The packages for running the Jupyter notebooks are best installed using conda: <br>
+
+```
+conda env create -f environment.yml
+conda activate pymc_env_hunter_steiner_2026
+python -m ipykernel install --user --name pymc_env_hunter_steiner_2026
+jupyter notebook
+```
+<br>
+Navigate to the notebook path in the Jupyter hub window. Change the working path to the repository install location <br>
+
+### R Scripts
+The libraries for running R scripts are best installed by restoring the R env snapshot:
+
+```
+R
+renv::restore()
+```
