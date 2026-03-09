@@ -5,7 +5,7 @@ library(dplyr)
 library(purrr)
 library(rootSolve)
 
-kinetic_df <- read.table("/Users/samuelhunter/ERalpha_Steiner2025/dat/all_filtered_fov_dfs.csv",
+kinetic_df <- read.table("dat/all_filtered_fov_dfs.csv",
                          sep=",", header=TRUE)
 
 kinetic_df <- kinetic_df[kinetic_df$`Molecule.Name`=="Estradiol",]
@@ -24,7 +24,6 @@ fourPL <- function(x, Ymin, Ymax, logEC50, n) {
 }
 
 # Fit per group
-View(kinetic_df)
 fits <- kinetic_df %>%
   group_by(user_metadata.Cell.Line.ID) %>%
   group_modify(~ {

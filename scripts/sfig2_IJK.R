@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(broom)
+library(patchwork)
 rm(list=ls())
 R.version
 
@@ -56,7 +57,7 @@ summary_df <- residence_imaging_df %>%
             mutant_se = mutant_sd/sqrt(n))
 
 
-ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(x=mean.y,y=fold_change)) +
+FigI_left <- ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(x=mean.y,y=fold_change)) +
   geom_point(data=summary_df[summary_df$nucleic_acid=="DNA",],aes(x=kd,y=mutant_mean,color=Cell.Line.ID),size=3) +
   geom_errorbar(data=summary_df[summary_df$nucleic_acid=="DNA",],aes(ymin=mutant_mean-mutant_se, y=mutant_mean, x=kd,
                                                                      ymax=mutant_mean+mutant_se), width=0.1,
@@ -72,9 +73,10 @@ ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(
     size = 4,
     inherit.aes = FALSE
   ) +
-  theme_classic(base_size=18)
+  theme_classic(base_size=18) +
+  theme(legend.position = "none")
 
-ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(x=mean.y,y=fold_change)) +
+FigI_right <- ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(x=mean.y,y=fold_change)) +
   geom_point(data=summary_df[summary_df$nucleic_acid=="RNA",],aes(x=kd,y=mutant_mean,color=Cell.Line.ID),size=3) +
   geom_errorbar(data=summary_df[summary_df$nucleic_acid=="RNA",],aes(ymin=mutant_mean-mutant_se, y=mutant_mean, x=kd,
                                                                      ymax=mutant_mean+mutant_se), width=0.1,
@@ -91,6 +93,8 @@ ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(
     inherit.aes = FALSE
   ) +
   theme_classic(base_size=18)
+
+FigI_left | FigI_right
 
 ### koff_slow
 rm(list=ls())
@@ -142,7 +146,7 @@ summary_df <- residence_imaging_df %>%
             mutant_sd = sd(fold_change),
             mutant_se = mutant_sd/sqrt(n))
 
-ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(x=mean.y,y=fold_change)) +
+FigJ_left <- ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(x=mean.y,y=fold_change)) +
   geom_point(data=summary_df[summary_df$nucleic_acid=="DNA",],aes(x=kd,y=mutant_mean,color=Cell.Line.ID),size=3) +
   geom_errorbar(data=summary_df[summary_df$nucleic_acid=="DNA",],aes(ymin=mutant_mean-mutant_se, y=mutant_mean, x=kd,
                                                                      ymax=mutant_mean+mutant_se), width=0.1,
@@ -158,9 +162,10 @@ ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(
     size = 4,
     inherit.aes = FALSE
   ) +
-  theme_classic(base_size=18)
+  theme_classic(base_size=18) +
+  theme(legend.position = "none")
 
-ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(x=mean.y,y=fold_change)) +
+FigJ_right <- ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(x=mean.y,y=fold_change)) +
   geom_point(data=summary_df[summary_df$nucleic_acid=="RNA",],aes(x=kd,y=mutant_mean,color=Cell.Line.ID),size=3) +
   geom_errorbar(data=summary_df[summary_df$nucleic_acid=="RNA",],aes(ymin=mutant_mean-mutant_se, y=mutant_mean, x=kd,
                                                                      ymax=mutant_mean+mutant_se), width=0.1,
@@ -177,7 +182,7 @@ ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(
     inherit.aes = FALSE
   ) +
   theme_classic(base_size=18)
-
+FigJ_left | FigJ_right
 
 ### fslow
 rm(list=ls())
@@ -233,7 +238,7 @@ summary_df <- residence_imaging_df %>%
             mutant_sd = sd(mean.x),
             mutant_se = mutant_sd/sqrt(n))
 
-ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(x=mean.y,y=mean.x)) +
+FigK_left <- ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(x=mean.y,y=mean.x)) +
   geom_point(data=summary_df[summary_df$nucleic_acid=="DNA",],aes(x=kd,y=mutant_mean,color=Cell.Line.ID),size=3) +
   geom_errorbar(data=summary_df[summary_df$nucleic_acid=="DNA",],aes(ymin=mutant_mean-mutant_se, y=mutant_mean, x=kd,
                                                                      ymax=mutant_mean+mutant_se), width=0.1,
@@ -249,9 +254,10 @@ ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="DNA",],aes(
     size = 4,
     inherit.aes = FALSE
   ) +
-  theme_classic(base_size=18)
+  theme_classic(base_size=18) +
+  theme(legend.position = "none")
 
-ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(x=mean.y,y=mean.x)) +
+FigK_right <- ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(x=mean.y,y=mean.x)) +
   geom_point(data=summary_df[summary_df$nucleic_acid=="RNA",],aes(x=kd,y=mutant_mean,color=Cell.Line.ID),size=3) +
   geom_errorbar(data=summary_df[summary_df$nucleic_acid=="RNA",],aes(ymin=mutant_mean-mutant_se, y=mutant_mean, x=kd,
                                                                      ymax=mutant_mean+mutant_se), width=0.1,
@@ -268,4 +274,4 @@ ggplot(data=residence_imaging_df[residence_imaging_df$nucleic_acid=="RNA",],aes(
     inherit.aes = FALSE
   ) +
   theme_classic(base_size=18)
-
+FigK_left | FigK_right
