@@ -23,6 +23,7 @@ scripts - R scripts which produce the indicated figure <br>
 
 
 ## Installation
+For both R and Python installs, installation should be rapid (< 10 minutes total). 
 ### Jupyter Notebook
 The packages for running the Jupyter notebooks are best installed using conda: <br>
 
@@ -32,6 +33,8 @@ conda activate pymc_env_hunter_steiner_2026
 python -m ipykernel install --user --name pymc_env_hunter_steiner_2026
 jupyter notebook
 ```
+The jupyter notebook can be run end-to-end to remake all figures present in the manuscript. User data can be substituted in, provided it follows the same format as `dat/df_tracks.csv`. Each field-of-view will take approximately 1 minute to fit on a personal computer.
+
 <br>
 Navigate to the notebook path in the Jupyter hub window. Change the working path to the repository install location <br>
 
@@ -42,5 +45,5 @@ The libraries for running R scripts are best installed by restoring the R env sn
 R
 renv::restore()
 ```
+Each R script should run rapidly, generating each specified figure in under a minute.
 
-For both R and Python installs, installation should be rapid (< 10 minutes total)
