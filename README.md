@@ -43,7 +43,7 @@ The libraries for running R scripts are best installed by restoring the R env sn
 
 ```
 R
-renv::restore()
+renv::restore(lockfile="renv.lock")
 ```
 Each R script should run rapidly, generating each specified figure in under a minute.
 
