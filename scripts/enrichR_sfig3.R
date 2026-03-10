@@ -76,7 +76,7 @@ resdata$refseq <- rownames(resdata)
 resdata <- separate_wider_delim(resdata, cols = refseq, delim = ".", names = c("refid", "iso"))
 resdata
 
-refseq_to_cid <- read.table(file = "/Users/samuelhunter/wuttke_era/pro/deseq2/refseq_to_common_id.txt",
+refseq_to_cid <- read.table(file = "dat/refseq_to_common_id.txt",
                             sep="\t",header=FALSE)
 
 resdata_id <- merge(resdata, refseq_to_cid,by.x="refid",by.y="V1")

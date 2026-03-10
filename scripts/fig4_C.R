@@ -135,6 +135,3 @@ Fig4C <- pheatmap(
   annotation_row = annotation_row_reordered,
   annotation_colors = annotation_colors
 )
-
-View(annotation_row)
-heatmap_df_reordered
