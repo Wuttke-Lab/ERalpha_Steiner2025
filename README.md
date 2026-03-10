@@ -1,5 +1,11 @@
-# ERalpha_Steiner2025
-Scripts relating to analysis of SMT and differential transcription data in Hunter and Steiner et al., 2025
+# DNA affinity driven chromatin dynamics determine Estrogen Receptor α transcriptional activity independent of RNA binding
+
+
+Scripts relating to analysis of SMT and differential transcription data in Hunter and Steiner et al., 2026: 
+https://doi.org/10.21203/rs.3.rs-8913294/v1
+<br>
+This work is licensed under a CC BY 4.0 License
+<br>
 Truncated source data is available in dat/ for trial runs of scripts
 Full source data available at: 10.5281/zenodo.18635439
 
@@ -16,6 +22,7 @@ scipy 1.15.0 <br>
 
 <br>
 For a full list of installed packages, see package.reqs for complete R session info and python environment details
+<br>
 <br>
 model_fit_residence_time.ipynb - Jupyter notebook for fitting residence time data using PyMC. <br>
 dat - input data for scripts <br>
